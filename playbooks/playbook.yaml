@@ -1,0 +1,13 @@
+---
+- name: First playbook
+  hosts: all
+  tasks:
+    - name: Import updade role
+      ansible.builtin.import_role:
+        name: update
+    - name: Import ufw role
+      ansible.builtin.import_role:
+        name: ufw
+    - name: Import user role
+      ansible.builtin.import_role:
+        name: users

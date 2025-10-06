@@ -1,0 +1,85 @@
+---
+# tasks file for update system and packages
+- name: Install curl and ca-certificates
+  become: true
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - curl
+    - ca-certificates
+  when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
+
+- name: Add key for docker repo
+  ansible.builtin.apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+  tags:
+    - key
+    - docker
+
+- name: Add Docker repo
+  ansible.builtin.apt_repository:
+    repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+    state: present
+    filename: docker.list
+  tags:
+    - docker
+    - repo
+
+- name: Update package cache
+  become: true
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 86400
+  tags:
+    - check
+
+- name: Clean up packages files no longer used
+  become: true
+  ansible.builtin.apt:
+    autoclean: true
+  tags:
+    - clean
+
+- name: Remove unused dependency packages
+  become: true
+  ansible.builtin.apt:
+    autoremove: true
+  tags:
+    - remove
+
+- name: Install packages
+  become: true
+  ansible.builtin.apt:
+    name: " {{ item }}"
+    state: present
+  loop:
+    - ufw
+    - vim
+    - docker-ce
+    - docker-ce-cli
+    - containerd.io
+    - docker-buildx-plugin
+    - docker-compose-plugin
+  tags:
+    - update
+
+- name: Check if reboot required
+  become: true
+  ansible.builtin.stat:
+    path: /var/run/reboot-required
+  register: update_reboot_required_check
+  tags:
+    - check-reboot
+
+- name: Rebooting server
+  become: true
+  ansible.builtin.reboot:
+    pre_reboot_delay: 5
+    post_reboot_delay: 30
+    reboot_timeout: 300
+    connect_timeout: 10
+  when: update_reboot_required_check.stat.exists
+  tags:
+    - reboot

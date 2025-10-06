@@ -1,0 +1,52 @@
+---
+# tasks file to configure ufw firewall
+- name: Set logging
+  become: true
+  community.general.ufw:
+    logging: 'on'
+  tags:
+    - ufw-log
+
+- name: Reject instead of denied and log
+  become: true
+  community.general.ufw:
+    rule: reject
+    port: auth
+    log: true
+  tags:
+    - ufw-log
+
+- name: Allow outgoing
+  become: true
+  community.general.ufw:
+    state: enabled
+    direction: outgoing
+    policy: allow
+  tags:
+    - ufw-allow
+
+- name: Limit ssh connection
+  become: true
+  community.general.ufw:
+    rule: limit
+    port: ssh
+    proto: tcp
+
+- name: Deny incoming
+  become: true
+  community.general.ufw:
+    state: enabled
+    direction: in
+    rule: deny
+  tags:
+    - ufw-deny
+
+- name: Allow http/https tcp connection
+  become: true
+  community.general.ufw:
+    rule: allow
+    port: "{{ item }}"
+    proto: tcp
+  loop:
+    - 80
+    - 443
