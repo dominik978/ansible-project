@@ -1,5 +1,6 @@
 # exclude folder/files to not follow
 .vscode/
 .git/
+.ansible
 log.txt
 
