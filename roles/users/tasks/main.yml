@@ -17,4 +17,4 @@
     state: present
     key: "{{ item }}"
   with_file:
-    - "ssh.pub_key file inside file folder"
+    - pub_keys/ssh_key.pub
