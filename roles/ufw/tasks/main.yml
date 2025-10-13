@@ -48,5 +48,31 @@
     port: "{{ item }}"
     proto: tcp
   loop:
+    - 22
     - 80
     - 443
+
+- name: Allow dns port
+  become: true
+  community.general.ufw:
+    rule: allow
+    port: 53
+    from_ip: "{{ item }}"
+  loop:
+    - 192.168.4.0/27
+    - 10.10.2.2/29
+
+- name: Allow Wireguard port
+  become: true
+  community.general.ufw:
+    rule: allow
+    port: 52001
+    proto: udp
+
+
+- name: Allow Home-assistant port
+  become: true
+  community.general.ufw:
+    rule: allow
+    port: 8225
+    proto: tcp
