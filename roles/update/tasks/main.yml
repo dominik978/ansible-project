@@ -70,6 +70,7 @@
   ansible.builtin.stat:
     path: /var/run/reboot-required
   register: update_reboot_required_check
+  when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
   tags:
     - check-reboot
 
