@@ -8,7 +8,7 @@
   loop:
     - curl
     - ca-certificates
-  when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
+  when: ansible_facts['distribution'] == 'Ubuntu' or ansible_facts['distribution'] == 'Debian'
 
 - name: Add key for docker repo
   ansible.builtin.apt_key:
@@ -20,7 +20,7 @@
 
 - name: Add Docker repo
   ansible.builtin.apt_repository:
-    repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+    repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu {{ ansible_facts['distribution_release'] }} stable"
     state: present
     filename: docker
   tags:
@@ -70,7 +70,7 @@
   ansible.builtin.stat:
     path: /var/run/reboot-required
   register: update_reboot_required_check
-  when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
+  when: ansible_facts['distribution'] == 'Ubuntu' or ansible_facts['distribution'] == 'Debian'
   tags:
     - check-reboot
 
