@@ -8,7 +8,6 @@
   loop:
     - curl
     - ca-certificates
-  when: ansible_facts['distribution'] == 'Ubuntu' or ansible_facts['distribution'] == 'Debian'
 
 - name: Add key for docker repo
   ansible.builtin.apt_key:
@@ -70,7 +69,6 @@
   ansible.builtin.stat:
     path: /var/run/reboot-required
   register: update_reboot_required_check
-  when: ansible_facts['distribution'] == 'Ubuntu' or ansible_facts['distribution'] == 'Debian'
   tags:
     - check-reboot
 
