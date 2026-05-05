@@ -5,7 +5,6 @@
     - name: Import updade role
       ansible.builtin.import_role:
         name: update
-      when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'
     - name: Import ufw role
       ansible.builtin.import_role:
         name: ufw

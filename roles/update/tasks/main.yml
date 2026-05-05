@@ -8,6 +8,7 @@
   loop:
     - curl
     - ca-certificates
+  when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'
 
 - name: Add key for docker repo
   ansible.builtin.apt_key:
@@ -16,6 +17,7 @@
   tags:
     - key
     - docker
+  when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'
 
 - name: Add Docker repo
   ansible.builtin.apt_repository:
@@ -25,6 +27,7 @@
   tags:
     - docker
     - repo
+  when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'
 
 - name: Update package cache
   become: true
@@ -33,6 +36,7 @@
     cache_valid_time: 86400
   tags:
     - check
+  when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'
 
 - name: Clean up packages files no longer used
   become: true
@@ -40,6 +44,7 @@
     autoclean: true
   tags:
     - clean
+  when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'
 
 - name: Remove unused dependency packages
   become: true
@@ -47,6 +52,7 @@
     autoremove: true
   tags:
     - remove
+  when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'
 
 - name: Install packages
   become: true
@@ -63,6 +69,7 @@
     - docker-compose-plugin
   tags:
     - update
+  when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'
 
 - name: Check if reboot required
   become: true
@@ -71,6 +78,7 @@
   register: update_reboot_required_check
   tags:
     - check-reboot
+  when: ansible_facts['distribution'] == 'Debian' or ansible_facts['distribution'] == 'Ubuntu'
 
 - name: Rebooting server
   become: true
@@ -79,6 +87,7 @@
     post_reboot_delay: 30
     reboot_timeout: 300
     connect_timeout: 10
-  when: update_reboot_required_check.stat.exists
+    msg: "Server reboot after system update"
+  when: update_reboot_required_check.stat.exists | default(false)
   tags:
     - reboot
